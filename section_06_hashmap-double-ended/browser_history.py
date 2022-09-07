@@ -8,57 +8,64 @@ class BrowserHistory:
   # Initializes browser hisotry from new tab. 
   # By default the starting URL will be an empty string.
   def __init__(self, homepage): 
-      self.deque = Node( homepage )
+      self.curr = ''
   
   # Returns the url of the current page.
   def current_page(self):
-      return self.deque.val
+      return self.curr.val
   
   # Navigates to the "page" from the current page. 
   # Nagivating forward should overwrite all previous forward browser history.
-  def visit(self, page): 
-      tmp = self.deque
+  def go_to(self, page): 
+      tmp = self.curr
       new_node = Node( page )
-      self.deque.next = new_node      
-      self.deque = new_node
-      self.deque.prev = tmp
+      # the old/current pointer
+      self.curr.next = new_node  
+      # now this is the new_node at pointer
+      self.curr = new_node
+      # setting new_node's and now the pointer prev
+      self.curr.prev = tmp
   
   # Navigates to the previous page visited.
   # After navigating return the URL of the current page.
   def go_back(self):
-      self.deque = self.deque.prev      
-      return self.deque.val
+      self.curr = self.curr.prev
+      return self.curr.val
     
   # Navigates to the page ahead in browser history.
   # If there is no page ahead, do nothing.
   # After navigating return the URL of the current page.
   def go_forward(self):
-      if self.deque.next is not None:
-        self.deque = self.deque.next
-        return self.deque.val
+      if self.curr.next is not None:
+        self.curr = self.curr.next
+        return self.curr.val
   
   # Navigates backwards N pages in browser history.
   # If there are not N pages behind, then return the new tab URL which is an empty string.
   # After navigating return the URL of the current page.
-  def back(self, N):
+  def skip_backward(self, N):
       for i in range( N ):
-          if self.deque.prev is None:
-              # coachable
+          if self.curr.prev is None:
               return ''
-              # leetcode
-            #   break
-          self.deque = self.deque.prev
-      return self.deque.val
+          self.curr = self.curr.prev
+      return self.curr.val
+
+  def skip_backward_instructions(self, N):
+      for i in range( N ):
+          if self.curr.prev is None:
+              break
+          self.curr = self.curr.prev
+      return self.curr.val
 
   # Navigates forward N pages in browser history.
   # If there are not N pages ahead, then go as far as you can.
   # After navigating return the URL of the current page.
-  def forward(self, N):
+  def skip_forward(self, N):
       for i in range( N ):
-          if self.deque.next is None:
+          if self.curr.next is None:
               break
-          self.deque = self.deque.next
-      return self.deque.val
+          self.curr = self.curr.next
+      return self.curr.val
 
 __name__ = '__main__':
     history = BrowserHistory()
